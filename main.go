@@ -1,24 +1,16 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"log"
 	"os"
+	"strings"
 )
 
 func main() {
-	file, err := os.Open("/Users/lukgar/Desktop/repos/aoc/3/test.txt") // <-- change me!
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
+	file, _ := os.ReadFile("/Users/lukgar/Desktop/repos/aoc/8.2/input8.txt")
 
-	scanner := bufio.NewScanner(file)
-
-	for scanner.Scan() {
-		line := scanner.Text()
-		fmt.Println(line)
+	for _, row := range strings.Split(strings.TrimSpace(string(file)), "\n") {
+		fmt.Println(row)
 	}
 
 }
