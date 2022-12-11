@@ -1,0 +1,160 @@
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+	"strconv"
+	"sort"
+	"math/big"
+)
+
+type monkey struct {
+	items []big.Int
+	op func(*big.Int) *big.Int
+	test func(big.Int) big.Int
+	inspects big.Int
+}
+
+func main() {
+	file, _ := os.ReadFile("/Users/lukgar/Desktop/repos/aoc/11/test.txt")
+
+	monkeys := make([]monkey, 0)
+
+	// split file on empty lines and loop over each block
+
+	for i, block := range strings.Split(strings.TrimSpace(string(file)), "\n\n") {
+		//fmt.Println(row)
+		//fmt.Println(i)
+		monkeys = append(monkeys, monkey{})
+		//fmt.Println(block)
+
+		var div_by big.Int
+		var true_to big.Int
+		var false_to big.Int
+		var op string
+
+		for _, row := range strings.Split(block, "\n") {
+			s := strings.TrimSpace(row)
+
+			if strings.HasPrefix(s, "Starting") {
+				for _, j := range strings.Split(s[16:], ", ") {
+					v, _ := strconv.Atoi(j)
+					monkeys[i].items = append(monkeys[i].items, *big.NewInt(int64(v)))
+				}
+			}
+
+			if strings.HasPrefix(s, "Operation") {
+				op = s[17:]
+			}
+
+			if strings.HasPrefix(s, "Test") {
+				db, _ := strconv.Atoi(s[19:])
+				div_by = *big.NewInt(int64(db))
+				
+			}
+
+			if strings.HasPrefix(s, "If true") {
+				tt, _ := strconv.Atoi(s[25:])
+				true_to = *big.NewInt(int64(tt))
+			}
+
+			if strings.HasPrefix(s, "If false") {
+				ft, _ := strconv.Atoi(s[26:])
+				false_to = *big.NewInt(int64(ft))
+			}
+		}
+		// monkeys[i].test = func(n big.Int) big.Int { if n % div_by == 0 { return true_to } else { return false_to }}
+		monkeys[i].test = func(n big.Int) big.Int { 
+			r := big.NewInt(0)
+			if r.Mod(&n, &div_by) == big.NewInt(0) { 
+				return true_to
+			} else { 
+				return false_to 
+			}
+		}
+
+		monkeys[i].op = get_op(op)
+
+	}
+	//fmt.Println(monkeys)
+
+	for j := 1; j < 10001; j++ {
+
+		for i := range monkeys {
+			for _, item := range monkeys[i].items {
+				item_to_throw := monkeys[i].op(&item)
+
+				//if item_to_throw < item {
+				if item_to_throw.Cmp(&item) < 0 {
+					// round 11 turn 2 overflow
+					fmt.Printf("%v < %v, round %v turn %v\n", item_to_throw, item, j, i)
+				}
+
+				//item_to_throw = big.Int(item_to_throw / 3)
+				catcher := monkeys[i].test(*item_to_throw)
+	
+				monkeys[catcher.Int64()].items = append(monkeys[catcher.Int64()].items, *item_to_throw)
+				monkeys[i].items = pop(monkeys[i].items)
+
+				//monkeys[i].inspects += 1
+				monkeys[i].inspects.Add(&monkeys[i].inspects, big.NewInt(1))
+	
+			}
+			// fmt.Printf("After turn %v\n", i)
+			// fmt.Println(monkeys)
+			// fmt.Println()
+		}
+		if j % 1000 == 0 || j == 1 || j == 20 {
+			fmt.Printf("Round %v\n", j)
+			for _, m := range monkeys {
+				
+				fmt.Println(m.inspects.String())
+				
+			}
+			fmt.Println()
+		}
+		
+
+	}
+	ins := make([]big.Int, 0)
+	for _, m := range monkeys {
+		ins = append(ins, m.inspects)
+	}
+	fmt.Println(ins)
+	//sort.Slice(ins, func(i, j int) bool { return ins[i] < ins[j] })
+	sort.Slice(ins, func(i, j int) bool { return ins[i].Cmp(&ins[j]) < 0 })
+	res := big.NewInt(0)
+	fmt.Println(res.Mul(&ins[len(ins)-2], &ins[len(ins)-1]))
+
+}
+
+func get_op(op string) func(*big.Int) *big.Int {
+	res := big.NewInt(0)
+	if string(op[4]) == "*" {
+		v := op[6:]
+		if v == "old" {
+			return func(a *big.Int) *big.Int {return res.Mul(a, a)}
+		} else {
+			vi, _ := strconv.Atoi(v)
+
+			return func(a *big.Int) *big.Int {return res.Mul(a, big.NewInt(int64(vi)))}
+		}
+	} else if string(op[4]) == "+" {
+		v := op[6:]
+		if v == "old" {
+			return func(a *big.Int) *big.Int {return res.Add(a, a)}
+		} else {
+			vi, _ := strconv.Atoi(v)
+			return func(a *big.Int) *big.Int {return res.Add(a, big.NewInt(int64(vi)))}
+		}
+	} 
+
+	return nil
+}
+
+func pop(s []big.Int) []big.Int {
+
+    l := len(s)
+    return s[:l-1]
+}
