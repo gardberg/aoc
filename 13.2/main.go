@@ -53,7 +53,7 @@ func main() {
 	sort.Sort(Packet(packets))
 
 	j, k := 0, 0
-	for i, _ := range packets {
+	for i := range packets {
 		if compare_arrays(div1, packets[i]) == 0 { 
 			j = i 
 		} else if compare_arrays(div2, packets[i]) == 0 { k = i }
