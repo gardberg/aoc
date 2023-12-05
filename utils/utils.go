@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"strconv"
 )
 
 func GetLines(path string) []string {
@@ -26,4 +27,16 @@ func GetLines(path string) []string {
 
 	return output
 
+}
+
+func ToInt(s []string) []int {
+	var output []int
+	for _, v := range(s) {
+		i, err := strconv.Atoi(v)
+		if err != nil {
+			log.Fatal(err)
+		}
+		output = append(output, i)
+	}
+	return output
 }
