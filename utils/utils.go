@@ -41,6 +41,14 @@ func ToInt(s []string) []int {
 	return output
 }
 
+func StringToInt(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return i
+}
+
 func MinOfSlice(s []int) int {
 	min := s[0]
 	for _, v := range(s) {
