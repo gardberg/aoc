@@ -40,3 +40,27 @@ func ToInt(s []string) []int {
 	}
 	return output
 }
+
+func MinOfSlice(s []int) int {
+	min := s[0]
+	for _, v := range(s) {
+		if v < min {
+			min = v
+		}
+	}
+	return min
+}
+
+func MaxInt(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func MinInt(a, b int) int {
+	if a > b {
+		return b
+	}
+	return a
+}
