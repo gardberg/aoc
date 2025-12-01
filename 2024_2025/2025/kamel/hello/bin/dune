@@ -1,0 +1,14 @@
+(executable
+  (public_name hello)
+  (name main)
+  (libraries hello cohttp-lwt lwt))
+
+(executable
+  (public_name test)
+  (name test)
+  (libraries hello cohttp-lwt-unix lwt stdio tls-lwt))
+
+(executable
+  (public_name one)
+  (name one)
+  (libraries hello cohttp-lwt-unix lwt stdio tls-lwt))

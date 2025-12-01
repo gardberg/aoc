@@ -1,0 +1,1 @@
+This is a project for learning OCAML through advent of code. I want to learn about the language so never directly edit files unless explicitly told so, as I want to write the code myself.
