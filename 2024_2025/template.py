@@ -1,9 +1,9 @@
 import os
 
 INPUT = "example.txt"
-# INPUT = input.txt
+# INPUT = "input.txt"
 
-input_file = os.path.join(os.path.dirname(__file__), "example.txt")
+input_file = os.path.join(os.path.dirname(__file__), INPUT)
 with open(input_file, "r") as f:
     inp = f.read()
 
